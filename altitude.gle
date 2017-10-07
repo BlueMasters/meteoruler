@@ -1,0 +1,138 @@
+! Meteo ruler
+
+width  = 6.5
+height  = 27.7
+topMargin = 1.5
+bottomMargin = 0.5
+
+maxh = 5600
+fontdy = 0.1
+vlinepos = width*0.62
+majortic = 0.5
+minortic= 0.3
+textMargin = 0.1
+boxdx = 0.01
+
+size width height
+
+sub meterInFeet x
+	return x * (1000/12/25.4)
+end sub
+
+sub FeetInMeter x
+	return x / (1000/12/25.4)
+end sub
+
+sub hpaInMeter x
+	return (1-(x/1013.25)^0.190284)*145366.45 / (1000/12/25.4)
+end sub
+
+sub meter
+	begin origin
+	set font ss
+	local major, minor, h
+	major = 100
+	minor = 25
+	h = height-topMargin-bottomMargin
+
+	set just right
+	for i = 0 to maxh step major
+		amove -(majortic + textMargin) (i * h / maxh - fontdy)
+		begin box fill white add boxdx nobox
+		write i
+		end box
+	next i
+	for i = 0 to maxh step minor
+		amove 0 (i * h / maxh)
+		if i % major = 0 then
+			rline -majortic 0
+		else
+			rline -minortic 0
+		end if
+	next i
+	end origin
+end sub
+
+sub feet
+	begin origin
+	set font ss
+	local major, minor, h
+	major = 500
+	minor = 100
+	h = height-topMargin-bottomMargin
+
+	set just left
+
+	for i = 0 to meterInFeet(maxh) step major
+		amove (majortic + textMargin) (feetInMeter(i) * h / maxh - fontdy)
+		begin box fill white add boxdx nobox
+		write i
+		end box
+	next i
+	for i = 0 to meterInFeet(maxh) step minor
+		amove 0 (feetInMeter(i) * h / maxh)
+		if i % major = 0 then
+			rline majortic 0
+		else
+			rline minortic 0
+		end if
+	next i
+	end origin
+end sub
+
+sub hpa x
+	local h, hdx
+	begin origin
+	set font ssb
+	set color rgb(100,0,0)
+	hdx = 2.5
+	set just right
+
+	h = height-topMargin-bottomMargin
+	amove (-hdx + majortic - textMargin) (hpaInMeter(x) * h / maxh - fontdy)
+	write x
+	amove (majortic+1) (hpaInMeter(x) * h / maxh)
+	rline (-hdx -1) 0
+
+	end origin
+end sub
+
+amove vlinepos bottomMargin
+
+hpa 1013.25
+hpa 975
+hpa 950
+hpa 925
+hpa 850
+hpa 800
+hpa 750
+hpa 700
+hpa 650
+hpa 600
+hpa 500
+meter
+feet
+
+amove vlinepos bottomMargin
+rline 0 height-topMargin-bottomMargin
+
+set font ssb
+set just left
+amove (vlinepos + majortic + textMargin) (height - 0.9)
+write "Feet"
+
+set just right
+amove (vlinepos - majortic - textMargin) (height - 0.9)
+write "Meter"
+
+set just right
+set color rgb(100,0,0)
+amove (vlinepos + majortic - textMargin -2.5) (height - 0.9)
+write "hPa"
+
+set color rgb(0,0,100)
+! last operation, cut the ruler
+amove 0 0
+box width height round 0.2
+
+
