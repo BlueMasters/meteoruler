@@ -13,6 +13,9 @@ minortic= 0.3
 textMargin = 0.1
 boxdx = 0.01
 
+hpax0 = -2.0
+hpax1 = +1.8
+
 size width height
 
 sub meterInFeet x
@@ -62,7 +65,6 @@ sub feet
 	h = height-topMargin-bottomMargin
 
 	set just left
-
 	for i = 0 to meterInFeet(maxh) step major
 		amove (majortic + textMargin) (feetInMeter(i) * h / maxh - fontdy)
 		begin box fill white add boxdx nobox
@@ -85,14 +87,13 @@ sub hpa x
 	begin origin
 	set font ssb
 	set color rgb(100,0,0)
-	hdx = 2.5
 	set just right
 
 	h = height-topMargin-bottomMargin
-	amove (-hdx + majortic - textMargin) (hpaInMeter(x) * h / maxh - fontdy)
+	amove (hpax0 - textMargin) (hpaInMeter(x) * h / maxh - fontdy)
 	write x
-	amove (majortic+1) (hpaInMeter(x) * h / maxh)
-	rline (-hdx -1) 0
+	amove (hpax1) (hpaInMeter(x) * h / maxh)
+	rline (hpax0-hpax1) 0
 
 	end origin
 end sub
@@ -103,6 +104,7 @@ hpa 1013.25
 hpa 975
 hpa 950
 hpa 925
+hpa 900
 hpa 850
 hpa 800
 hpa 750
@@ -127,7 +129,7 @@ write "Meter"
 
 set just right
 set color rgb(100,0,0)
-amove (vlinepos + majortic - textMargin -2.5) (height - 0.9)
+amove (vlinepos + hpax0 - textMargin) (height - 0.9)
 write "hPa"
 
 set color rgb(0,0,100)
