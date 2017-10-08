@@ -1,6 +1,6 @@
 ! Meteo ruler
 
-width  = 6.5
+width  = 8.5
 height  = 27.7
 topMargin = 1.5
 bottomMargin = 0.5
@@ -98,6 +98,15 @@ sub hpa x
 	end origin
 end sub
 
+sub punchCross
+	begin origin
+	amove -0.1 0
+	rline 0.2 0
+	amove 0 -0.1
+	rline 0 0.2
+	end origin
+end sub
+
 amove vlinepos bottomMargin
 
 hpa 1013.25
@@ -112,6 +121,7 @@ hpa 700
 hpa 650
 hpa 600
 hpa 500
+hpa 550
 meter
 feet
 
@@ -128,11 +138,40 @@ amove (vlinepos - majortic - textMargin) (height - 0.9)
 write "Meter"
 
 set just right
-set color rgb(100,0,0)
+set color rgb(1,0,0)
 amove (vlinepos + hpax0 - textMargin) (height - 0.9)
 write "hPa"
 
-set color rgb(0,0,100)
+
+gsave
+amove 8 .8
+begin rotate 90
+postscript gh.eps 0.3 0.3
+set just left
+set font ss
+set color rgb(.5,.5,.5)
+rmove 0.4 0
+text https://github.com/BlueMasters/meteoruler
+rmove 21.5 0
+text Fribourg Challenge
+end rotate
+grestore
+
+! Punch Holes (ISO 838)
+set color rgb(0,0,1)
+amove 1.2 (height/2)
+
+rmove 0 4
+gsave
+punchCross
+grestore
+gsave
+rmove 0 -8
+punchCross
+grestore
+
+
+set color rgb(0,0,1)
 ! last operation, cut the ruler
 amove 0 0
 box width height round 0.2
