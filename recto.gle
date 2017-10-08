@@ -1,22 +1,26 @@
 ! Meteo ruler
 
-width  = 8.5
-height  = 27.7
-topMargin = 1.5
+width  = 4.6
+height  = 27
+topMargin = 1
+topTextPos = 0.55
 bottomMargin = 0.5
 
 maxh = 5600
 fontdy = 0.1
-vlinepos = width*0.62
+vlinepos = width*0.59
 majortic = 0.5
 minortic= 0.3
 textMargin = 0.1
 boxdx = 0.01
 
-hpax0 = -2.0
-hpax1 = +1.8
+hpax0 = -1.7
+hpax1 = +1.7
 
-size width height
+rulerxspace = 0.2
+rulern = 4
+
+size (width * rulern + rulerxspace * (rulern - 1)) height
 
 sub meterInFeet x
 	return x * (1000/12/25.4)
@@ -33,7 +37,7 @@ end sub
 sub meter
 	begin origin
 	set font ss
-	local major, minor, h
+	local major, minor, h, i
 	major = 100
 	minor = 25
 	h = height-topMargin-bottomMargin
@@ -59,7 +63,7 @@ end sub
 sub feet
 	begin origin
 	set font ss
-	local major, minor, h
+	local major, minor, h, i
 	major = 500
 	minor = 100
 	h = height-topMargin-bottomMargin
@@ -82,7 +86,7 @@ sub feet
 	end origin
 end sub
 
-sub hpa x
+sub hpa x dx
 	local h, hdx
 	begin origin
 	set font ssb
@@ -90,10 +94,10 @@ sub hpa x
 	set just right
 
 	h = height-topMargin-bottomMargin
-	amove (hpax0 - textMargin) (hpaInMeter(x) * h / maxh - fontdy)
+	amove (hpax0 - textMargin + dx) (hpaInMeter(x) * h / maxh - fontdy)
 	write x
 	amove (hpax1) (hpaInMeter(x) * h / maxh)
-	rline (hpax0-hpax1) 0
+	rline (hpax0-hpax1+dx) 0
 
 	end origin
 end sub
@@ -107,73 +111,73 @@ sub punchCross
 	end origin
 end sub
 
-amove vlinepos bottomMargin
+sub ruler
+	gsave
+	begin origin
 
-hpa 1013.25
-hpa 975
-hpa 950
-hpa 925
-hpa 900
-hpa 850
-hpa 800
-hpa 750
-hpa 700
-hpa 650
-hpa 600
-hpa 500
-hpa 550
-meter
-feet
+	amove vlinepos bottomMargin
 
-amove vlinepos bottomMargin
-rline 0 height-topMargin-bottomMargin
+	hpa 1013.25 .5
+	hpa 975 0
+	hpa 950 0
+	hpa 925 0
+	hpa 900 0
+	hpa 850 0
+	hpa 800 0
+	hpa 750 0
+	hpa 700 0
+	hpa 650 0
+	hpa 600 0
+	hpa 500 0
+	hpa 550 0
+	meter
+	feet
 
-set font ssb
-set just left
-amove (vlinepos + majortic + textMargin) (height - 0.9)
-write "Feet"
+	amove vlinepos bottomMargin
+	rline 0 height-topMargin-bottomMargin
 
-set just right
-amove (vlinepos - majortic - textMargin) (height - 0.9)
-write "Meter"
+	set font ssb
+	set just left
+	amove (vlinepos + majortic + textMargin) (height - topTextPos)
+	write "Feet"
 
-set just right
-set color rgb(1,0,0)
-amove (vlinepos + hpax0 - textMargin) (height - 0.9)
-write "hPa"
+	set just right
+	amove (vlinepos - majortic - textMargin) (height - topTextPos)
+	write "Meter"
 
-
-gsave
-amove 8 .8
-begin rotate 90
-postscript gh.eps 0.3 0.3
-set just left
-set font ss
-set color rgb(.5,.5,.5)
-rmove 0.4 0
-text https://github.com/BlueMasters/meteoruler
-rmove 21.5 0
-text Fribourg Challenge
-end rotate
-grestore
-
-! Punch Holes (ISO 838)
-set color rgb(0,0,1)
-amove 1.2 (height/2)
-
-rmove 0 4
-gsave
-punchCross
-grestore
-gsave
-rmove 0 -8
-punchCross
-grestore
+	set just right
+	set color rgb(1,0,0)
+	amove (vlinepos + hpax0 - textMargin) (height - topTextPos)
+	write "hPa"
 
 
-set color rgb(0,0,1)
-! last operation, cut the ruler
-amove 0 0
-box width height round 0.2
+	! gsave
+	! amove .24 22.8
+	! begin rotate 90
+	! gsave
+	! rmove 0 -.05
+	! postscript gh.eps 0.2 0.2
+	! grestore
+	! set just left
+	! set font ss
+	! set color rgb(.5,.5,.5)
+	! rmove 0.3 0
+	! begin scale 0.5 0.5
+	! text https://github.com/BlueMasters/meteoruler
+	! end scale
+	! end rotate
+	! grestore
 
+	set color rgb(.7,.7,.7)
+	! last operation, cut the ruler
+	amove 0 0
+	box width height round 0.2
 
+	end origin
+	grestore
+end sub
+
+for i = 0 to 4
+	ruler
+	rmove width+rulerxspace 0
+next i

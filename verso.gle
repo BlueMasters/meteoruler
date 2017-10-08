@@ -1,0 +1,55 @@
+! Meteo ruler
+
+width  = 4.6
+height  = 27
+topMargin = 1
+topTextPos = 0.55
+bottomMargin = 0.5
+
+maxh = 5600
+fontdy = 0.1
+vlinepos = width*0.59
+majortic = 0.5
+minortic= 0.3
+textMargin = 0.1
+boxdx = 0.01
+
+hpax0 = -1.7
+hpax1 = +1.7
+
+rulerxspace = 0.2
+rulern = 4
+
+size (width * rulern + rulerxspace * (rulern - 1)) height
+
+
+sub ruler
+	gsave
+	begin origin
+
+	gsave
+	amove 2.6 2.6
+	begin rotate 90
+	gsave
+	rmove 0 -.5
+	postscript gh.eps 2 2
+	grestore
+	set just left
+	set font ss
+	set color rgb(.5,.5,.5)
+	rmove 2.5 0
+	begin scale 3 3
+	text https://github.com/BlueMasters/meteoruler
+	end scale
+	end rotate
+	grestore
+	set color rgb(.7,.7,.7)
+
+	end origin
+	grestore
+end sub
+
+for i = 0 to 4
+	ruler
+	rmove width+rulerxspace 0
+next i
